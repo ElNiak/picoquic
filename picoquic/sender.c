@@ -1706,7 +1706,7 @@ static int picoquic_retransmit_needed_packet(picoquic_cnx_t* cnx, picoquic_packe
                         // Chris: We want to remove this code to check idle timeout connection termination
                         /* if (old_path->nb_retransmit > 7 &&
                             cnx->cnx_state >= picoquic_state_ready) {
-                            /* Max retransmission reached for this path */
+                            // Max retransmission reached for this path 
                             DBG_PRINTF("%s\n", "Too many data retransmits, abandon path");
                             picoquic_log_app_message(cnx, "%s", "Too many data retransmits, abandon path");
                             old_path->challenge_failed = 1;
