@@ -4301,18 +4301,21 @@ static int picoquic_check_idle_timer(picoquic_cnx_t* cnx, uint64_t* next_wake_ti
     else {
         idle_timer = cnx->start_time + PICOQUIC_MICROSEC_HANDSHAKE_MAX;
     }
-
+    //Chris remove idle timeout to check temporal properties
+    /*
     if (current_time >= idle_timer) {
-        /* Too long silence, break it. */
+        // Too long silence, break it. 
         if (cnx->cnx_state != picoquic_state_draining) {
             cnx->local_error = PICOQUIC_ERROR_IDLE_TIMEOUT;
         }
         ret = PICOQUIC_ERROR_DISCONNECTED;
-        // Chis add logs to see information in logs
+        // Chris add logs to see information in logs
         DBG_PRINTF("%s\n", "Too long silence, break it, silent connection close");
         picoquic_log_app_message(cnx, "%s",  "Too long silence, break it, silent connection close");
         picoquic_connection_disconnect(cnx);
-    } else if (idle_timer < *next_wake_time) {
+    }
+    */
+    if (idle_timer < *next_wake_time) {
         *next_wake_time = idle_timer;
         SET_LAST_WAKE(cnx->quic, PICOQUIC_SENDER);
     }
