@@ -4275,7 +4275,6 @@ int picoquic_prepare_packet_ready(picoquic_cnx_t* cnx, picoquic_path_t* path_x, 
     return ret;
 }
 
-
 static int picoquic_check_idle_timer(picoquic_cnx_t* cnx, uint64_t* next_wake_time, uint64_t current_time)
 {
     int ret = 0;
@@ -4292,20 +4291,27 @@ static int picoquic_check_idle_timer(picoquic_cnx_t* cnx, uint64_t* next_wake_ti
         if (idle_timer < cnx->idle_timeout) {
             idle_timer = UINT64_MAX;
         }
+        DBG_PRINTF("cnx->cnx_state >= picoquic_state_ready - idle_timer: %d\n", idle_timer);
     }
     else if (cnx->local_parameters.idle_timeout > (PICOQUIC_MICROSEC_HANDSHAKE_MAX / 1000)) {
         idle_timer = cnx->start_time + cnx->local_parameters.idle_timeout*1000ull;
+        DBG_PRINTF("cnx->local_parameters.idle_timeout > (PICOQUIC_MICROSEC_HANDSHAKE_MAX / 1000) - idle_timer: %d\n", idle_timer);
     }
     else {
         idle_timer = cnx->start_time + PICOQUIC_MICROSEC_HANDSHAKE_MAX;
+        DBG_PRINTF("else - idle_timer: %d\n", idle_timer);
     }
-
+    DBG_PRINTF("current_time: %d\n", current_time);
+    picoquic_log_app_message(cnx, "idle_timer: %d",  idle_timer);
     if (current_time >= idle_timer) {
         /* Too long silence, break it. */
         if (cnx->cnx_state != picoquic_state_draining) {
             cnx->local_error = PICOQUIC_ERROR_IDLE_TIMEOUT;
         }
         ret = PICOQUIC_ERROR_DISCONNECTED;
+        // Chis add logs to see information in logs
+        DBG_PRINTF("%s\n", "Too long silence, break it, silent connection close");
+        picoquic_log_app_message(cnx, "%s",  "Too long silence, break it, silent connection close");
         picoquic_connection_disconnect(cnx);
     } else if (idle_timer < *next_wake_time) {
         *next_wake_time = idle_timer;
