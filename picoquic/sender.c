@@ -4291,17 +4291,17 @@ static int picoquic_check_idle_timer(picoquic_cnx_t* cnx, uint64_t* next_wake_ti
         if (idle_timer < cnx->idle_timeout) {
             idle_timer = UINT64_MAX;
         }
-        DBG_PRINTF("cnx->cnx_state >= picoquic_state_ready - idle_timer: %d\n", idle_timer);
+        picoquic_log_app_message(cnx, "cnx->cnx_state >= picoquic_state_ready - idle_timer: %d\n", idle_timer);
     }
     else if (cnx->local_parameters.idle_timeout > (PICOQUIC_MICROSEC_HANDSHAKE_MAX / 1000)) {
         idle_timer = cnx->start_time + cnx->local_parameters.idle_timeout*1000ull;
-        DBG_PRINTF("cnx->local_parameters.idle_timeout > (PICOQUIC_MICROSEC_HANDSHAKE_MAX / 1000) - idle_timer: %d\n", idle_timer);
+        picoquic_log_app_message(cnx, "cnx->local_parameters.idle_timeout > (PICOQUIC_MICROSEC_HANDSHAKE_MAX / 1000) - idle_timer: %d\n", idle_timer);
     }
     else {
         idle_timer = cnx->start_time + PICOQUIC_MICROSEC_HANDSHAKE_MAX;
-        DBG_PRINTF("else - idle_timer: %d\n", idle_timer);
+        picoquic_log_app_message(cnx, "else - idle_timer: %d\n", idle_timer);
     }
-    DBG_PRINTF("current_time: %d\n", current_time);
+    picoquic_log_app_message(cnx, "current_time: %d\n", current_time);
     picoquic_log_app_message(cnx, "idle_timer: %d",  idle_timer);
     if (current_time >= idle_timer) {
         /* Too long silence, break it. */
